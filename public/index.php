@@ -154,4 +154,4 @@ Router::run('/');
 // Router::run('/', true, true, true);
 
 ?>
-<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="<?php __DIR__ ?>style.css">
