@@ -14,6 +14,7 @@
 * Text/source files without a newline at the end.
 * Declaring several variables in one statement.
 
-* Omitting variable types, parameter types or return types.
+* Omitting parameter types or return types on functions.
+* Omitting `()` on function calls.
 * The `mixed` type.
 * Using `"` over `'` for literal strings.
