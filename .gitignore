@@ -1,0 +1,8 @@
+# Windows thumbnails.
+Thumbs.db
+
+# macOS Finder data.
+.DS_Store
+
+# JetBrains IDE's project files.
+.idea
