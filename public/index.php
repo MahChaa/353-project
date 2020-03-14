@@ -1,7 +1,5 @@
-<h1>hello</h1>
 <?php
-// Include router class
-include '../src/Router.php';
+include(__DIR__ . '/../src/Router.php');
 
 function navi() {
     echo <<<EOD
@@ -154,3 +152,6 @@ Router::run('/');
 
 // Enable case sensitive mode, trailing slashes and multi match mode by setting the params to true
 // Router::run('/', true, true, true);
+
+?>
+<link rel="stylesheet" type="text/css" href="style.css">
