@@ -1,7 +1,7 @@
 <h1>hello</h1>
 <?php
 // Include router class
-include 'Route.php';
+include '../src/Router.php';
 
 function navi() {
     echo <<<EOD
@@ -27,20 +27,20 @@ EOD;
 }
 
 // Add base route (startpage)
-Route::add('/', function() {
+Router::add('/', function() {
     navi();
     echo 'Welcome :-)';
 });
 
 // Another base route example
-Route::add('/index.php', function() {
+Router::add('/index.php', function() {
     navi();
     echo 'You are not really on index.php ;-)';
 });
 
 // Simple test route that simulates static html file
 // TODO: Fix this for some web servers
-Route::add('/test.html', function() {
+Router::add('/test.html', function() {
     navi();
     echo 'Hello from test.html';
 });
@@ -48,26 +48,26 @@ Route::add('/test.html', function() {
 // This route is for debugging only
 // It simply prints out some php infos
 // Do not use this route on production systems!
-Route::add('/phpinfo', function() {
+Router::add('/phpinfo', function() {
     navi();
     phpinfo();
 });
 
 // Post route example
-Route::add('/contact-form', function() {
+Router::add('/contact-form', function() {
     navi();
     echo '<form method="post"><input type="text" name="test"><input type="submit" value="send"></form>';
 }, 'get');
 
 // Post route example
-Route::add('/contact-form', function() {
+Router::add('/contact-form', function() {
     navi();
     echo 'Hey! The form has been sent:<br>';
     print_r($_POST);
 }, 'post');
 
 // Get and Post route example
-Route::add('/get-post-sample', function() {
+Router::add('/get-post-sample', function() {
     navi();
     echo 'You can GET this page and also POST this form back to it';
     echo '<form method="post"><input type="text" name="input"><input type="submit" value="send"></form>';
@@ -81,49 +81,49 @@ Route::add('/get-post-sample', function() {
 // Be aware that (.*) will match / (slash) too. For example: /user/foo/bar/edit
 // Also users could inject SQL statements or other untrusted data if you use (.*)
 // You should better use a saver expression like /user/([0-9]*)/edit or /user/([A-Za-z]*)/edit
-Route::add('/user/(.*)/edit', function($id) {
+Router::add('/user/(.*)/edit', function($id) {
     navi();
     echo 'Edit user with id '.$id.'<br>';
 });
 
 // Accept only numbers as parameter. Other characters will result in a 404 error
-Route::add('/foo/([0-9]*)/bar', function($var1) {
+Router::add('/foo/([0-9]*)/bar', function($var1) {
     navi();
     echo $var1.' is a great number!';
 });
 
 // Crazy route with parameters
-Route::add('/(.*)/(.*)/(.*)/(.*)', function($var1,$var2,$var3,$var4) {
+Router::add('/(.*)/(.*)/(.*)/(.*)', function($var1,$var2,$var3,$var4) {
     navi();
     echo 'This is the first match: '.$var1.' / '.$var2.' / '.$var3.' / '.$var4.'<br>';
 });
 
 // Long route example
 // By default this route gets never triggered because the route before matches too
-Route::add('/foo/bar/foo/bar', function() {
+Router::add('/foo/bar/foo/bar', function() {
     echo 'This is the second match (This route should only work in multi match mode) <br>';
 });
 
 // Trailing slash example
-Route::add('/aTrailingSlashDoesNotMatter', function() {
+Router::add('/aTrailingSlashDoesNotMatter', function() {
     navi();
     echo 'a trailing slash does not matter<br>';
 });
 
 // Case example
-Route::add('/theCaseDoesNotMatter',function() {
+Router::add('/theCaseDoesNotMatter',function() {
     navi();
     echo 'the case does not matter<br>';
 });
 
 // 405 test
-Route::add('/this-route-is-defined', function() {
+Router::add('/this-route-is-defined', function() {
     navi();
     echo 'You need to patch this route to see this content';
 }, 'patch');
 
 // Add a 404 not found route
-Route::pathNotFound(function($path) {
+Router::pathNotFound(function($path) {
     // Do not forget to send a status header back to the client
     // The router will not send any headers by default
     // So you will have the full flexibility to handle this case
@@ -134,7 +134,7 @@ Route::pathNotFound(function($path) {
 });
 
 // Add a 405 method not allowed route
-Route::methodNotAllowed(function($path, $method) {
+Router::methodNotAllowed(function($path, $method) {
     // Do not forget to send a status header back to the client
     // The router will not send any headers by default
     // So you will have the full flexibility to handle this case
@@ -146,11 +146,11 @@ Route::methodNotAllowed(function($path, $method) {
 
 // Run the Router with the given Basepath
 // If your script lives in the web root folder use a / or leave it empty
-Route::run('/');
+Router::run('/');
 
 // If your script lives in a subfolder you can use the following example
 // Do not forget to edit the basepath in .htaccess if you are on apache
-// Route::run('/api/v1');
+// Router::run('/api/v1');
 
 // Enable case sensitive mode, trailing slashes and multi match mode by setting the params to true
-// Route::run('/', true, true, true);
+// Router::run('/', true, true, true);

@@ -22,12 +22,19 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-class Route {
+class Router {
 
     private static $routes = Array();
     private static $pathNotFound = null;
     private static $methodNotAllowed = null;
 
+    /**
+     * Function used to add a new route
+     * @param string $expression Route string or expression
+     * @param callable $function Function to call if route with allowed method is found
+     * @param string|array $method Either a string of allowed method or an array with string values
+     *
+     */
     public static function add($expression, $function, $method = 'get') {
         array_push(self::$routes, Array(
             'expression' => $expression,
@@ -44,12 +51,12 @@ class Route {
         self::$methodNotAllowed = $function;
     }
 
-    public static function run(string $basePath = '/') {
-        // Parse current url
-        $parsed_url = parse_url($_SERVER['REQUEST_URI']);//Parse Uri
+    public static function run($basepath = '/') {
+        // Parse current URL
+        $parsed_url = parse_url($_SERVER['REQUEST_URI']);
 
-        if (isset($parsed_url['path'])) {
-            $path = $parsed_url['path'];
+        if (isset($parsed_url['path']) && $parsed_url['path'] != '/') {
+            $path = rtrim($parsed_url['path'], '/');
         } else {
             $path = '/';
         }
@@ -66,8 +73,8 @@ class Route {
             // If the method matches check the path
 
             // Add basepath to matching string
-            if ($basePath != '' && $basePath != '/') {
-                $route['expression'] = '(' . $basePath . ')' . $route['expression'];
+            if ($basepath != '' && $basepath != '/') {
+                $route['expression'] = '(' . $basepath . ')' . $route['expression'];
             }
 
             // Add 'find string start' automatically
@@ -76,50 +83,50 @@ class Route {
             // Add 'find string end' automatically
             $route['expression'] = $route['expression'] . '$';
 
-            // echo $route['expression'].'<br/>';
-
             // Check path match
-            if (preg_match('#' . $route['expression'] . '#', $path, $matches)) {
-
+            if (preg_match('#' . $route['expression'] . '#' . 'i', $path, $matches)) {
                 $path_match_found = true;
 
-                // Check method match
-                if (strtolower($method) == strtolower($route['method'])) {
+                // Cast allowed method to array if it's not one already, then run through all methods
+                foreach ((array)$route['method'] as $allowedMethod) {
+                    // Check method match
+                    if (strtolower($method) == strtolower($allowedMethod)) {
+                        array_shift($matches); // Always remove first element. This contains the whole string
 
-                    array_shift($matches);// Always remove first element. This contains the whole string
+                        if ($basepath != '' && $basepath != '/') {
+                            array_shift($matches); // Remove basepath
+                        }
 
-                    if ($basePath != '' && $basePath != '/') {
-                        array_shift($matches); // Remove $basePath
+                        call_user_func_array($route['function'], $matches);
+
+                        $route_match_found = true;
+
+                        // Do not check other routes
+                        break;
                     }
-
-                    call_user_func_array($route['function'], $matches);
-
-                    $route_match_found = true;
-
-                    // Do not check other routes
-                    break;
                 }
             }
+
+            // Break the loop if the first found route is a match
+            if ($route_match_found) {
+                break;
+            }
+
         }
 
         // No matching route was found
         if (!$route_match_found) {
-
             // But a matching path exists
             if ($path_match_found) {
-                header("HTTP/1.0 405 Method Not Allowed");
                 if (self::$methodNotAllowed) {
                     call_user_func_array(self::$methodNotAllowed, Array($path, $method));
                 }
             } else {
-                header("HTTP/1.0 404 Not Found");
                 if (self::$pathNotFound) {
                     call_user_func_array(self::$pathNotFound, Array($path));
                 }
             }
 
         }
-
     }
-
 }
