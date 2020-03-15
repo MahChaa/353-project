@@ -50,6 +50,10 @@ Router::add('/phpinfo', function() {
     navi();
     phpinfo();
 });
+Router::add('/phpinfo/what', function() {
+    navi();
+    echo 'aaaaa';
+});
 
 // Post route example
 Router::add('/contact-form', function() {
