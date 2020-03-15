@@ -22,8 +22,9 @@ class ManyTable extends Table {
      * col = test_id,
      * type = string,
      * public = 1,
-     * foreignTable = Test,
-     * view = test_int,
+     * manyToOne = Test,
+     * foreignKey = test_id,
+     * foreignView = test_str,
      * header = Test Int of another Table
      * }
      */

@@ -10,8 +10,7 @@ class Table {
      * @return array
      */
     private static function convertDocCommentToJORM(string $docComment): array {
-        $docComment = preg_replace('/\s+/', '', $docComment);
-        preg_match_all('/(\w+)=(\w+)/', $docComment, $matches);
+        preg_match_all('/(\w+)\s*=\s*([^,\n]+)/', $docComment, $matches);
 
         return array_combine($matches[1], $matches[2]);
     }
@@ -84,6 +83,8 @@ class Table {
      * @return string
      */
     private function constructHTMLTableRow(ReflectionClass $reflectionClass): string {
+        global $database;
+
         $retVal = '<tr>';
         foreach ($reflectionClass->getProperties() as $property) {
             $jormInfo = $this->convertDocCommentToJORM($property->getDocComment());
@@ -91,7 +92,19 @@ class Table {
                 continue;
             }
 
-            $retVal .= '<td>'. $property->getValue($this) . '</td>';
+            $value = $property->getValue($this);
+
+            // If the column is a foreign key then we need to figure out what it wants.
+            if (isset($jormInfo['manyToOne'])) {
+                $tableName = $jormInfo['manyToOne'];
+                $foreignKeyColumn = $jormInfo['foreignKey'];
+                $desiredColumn = $jormInfo['foreignView'];
+
+                $infoToDisplay = $database->getTableCellFromForeignKey($tableName, $value, $foreignKeyColumn, $desiredColumn);
+                $retVal .= '<td>'. $infoToDisplay . '</td>';
+            } else {
+                $retVal .= '<td>'. $value . '</td>';
+            }
         }
 
         $retVal .= '</tr>';

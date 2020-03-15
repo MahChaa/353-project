@@ -17,6 +17,26 @@ class Database {
         }
     }
 
+    private function convertQueryToAssociativeArray(mysqli_result $result): array {
+        if ($result->num_rows < 1) {
+            return array();
+        }
+
+        $rows = array();
+        while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+            array_push($rows, $row);
+        }
+
+        return $rows;
+    }
+
+    /**
+     * Performs a wildcard select on a table with an optional WHERE clause.
+     *
+     * @param string $tableName
+     * @param string $whereClause
+     * @return array
+     */
     public function queryAllRowsFromTable(string $tableName, string $whereClause = ''): array {
         $select = "SELECT * FROM `$tableName`";
 
@@ -27,15 +47,23 @@ class Database {
         $query .= ';';
 
         $result = $this->connection->query($query);
+        return $this->convertQueryToAssociativeArray($result);
+    }
 
-        if ($result->num_rows < 1) {
-            return array();
-        }
+    /**
+     * Given a foreign key to a table, returns a specific cell from a row.
+     *
+     * @param $tableName
+     * @param int $foreignKey
+     * @param string $foreignKeyColumn
+     * @param string $desiredColumn
+     * @return null|string
+     */
+    public function getTableCellFromForeignKey($tableName, int $foreignKey, string $foreignKeyColumn, string $desiredColumn): ?string {
+        $query = "SELECT $desiredColumn AS `foreign_grabber` FROM `$tableName` WHERE $foreignKeyColumn = $foreignKey";
 
-        $rows = array();
-        while($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-            array_push($rows, $row);
-        }
-        return $rows;
+        $result = $this->connection->query($query);
+        $result = $this->convertQueryToAssociativeArray($result);
+        return $result[0]['foreign_grabber'];
     }
 }
