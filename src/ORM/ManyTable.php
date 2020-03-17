@@ -4,7 +4,8 @@ require_once(__DIR__ . '/Table.php');
 
 /**
  * \JORM {
- * table = TableMany
+ * table = TableMany,
+ * primaryKeyColumn = many_id
  * }
  */
 class ManyTable extends Table {

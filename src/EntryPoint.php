@@ -7,20 +7,20 @@ require_once(__DIR__ . '/Database.php');
 $database = new Database();
 $database->initialize();
 
-$sqlOutput = $database->queryAllRowsFromTable('Test');
-
-try {
-    echo ManyTable::constructHTMLTable();
-} catch (ReflectionException $e) {
-    echo "<p>$e</p>";
-}
-
-//include(__DIR__ . '/InitializeRoutes.php');
+include(__DIR__ . '/InitializeRoutes.php');
 
 ?>
 <style>
     body {
         background-color: teal;
+    }
+
+    .edit-link, .edit-link:visited {
+        color: blue;
+    }
+
+    .delete-link, .delete-link:visited {
+        color: red;
     }
 
     .db-table {
@@ -65,5 +65,10 @@ try {
 
     .db-table td:first-of-type {
         border-left: 0;
+    }
+
+    .db-table td:nth-last-child(1), .db-table td:nth-last-child(2) {
+        font-weight: bold;
+        padding: 0;
     }
 </style>

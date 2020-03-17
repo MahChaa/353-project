@@ -1,7 +1,7 @@
 <?php
 
 
-class Table {
+abstract class Table {
     /**
      * Converts the doc comment's JORM to an array.
      *
@@ -13,6 +13,11 @@ class Table {
         preg_match_all('/(\w+)\s*=\s*([^,\n]+)/', $docComment, $matches);
 
         return array_combine($matches[1], $matches[2]);
+    }
+
+    private static function getClassHeaderJORM() {
+        $reflectionClass = new ReflectionClass(get_called_class());
+        return self::convertDocCommentToJORM($reflectionClass->getDocComment());
     }
 
     /**
@@ -35,11 +40,11 @@ class Table {
      * @return string
      * @throws ReflectionException
      */
-    public static function constructHTMLTable(string $whereClause = ''): string {
+    public static function constructViewHTMLTable(string $whereClause = ''): string {
         global $database;
         $reflectionClass = new ReflectionClass(get_called_class());
 
-        $jormInfo = self::convertDocCommentToJORM($reflectionClass->getDocComment());
+        $jormInfo = self::getClassHeaderJORM();
         $sqlRows = $database->queryAllRowsFromTable($jormInfo['table'], $whereClause);
 
         $resultTable = '<table class="db-table">';
@@ -71,6 +76,7 @@ class Table {
 
             $headerResult .= '<th>' . $jormInfo['header'] . '</th>';
         }
+        $headerResult .= '<th colspan="2"></th>';
 
         $headerResult .= '</thead>';
         return $headerResult;
@@ -85,10 +91,19 @@ class Table {
     private function constructHTMLTableRow(ReflectionClass $reflectionClass): string {
         global $database;
 
+        $classJORM = self::getClassHeaderJORM();
+        $primaryKey = -1;
         $retVal = '<tr>';
+
         foreach ($reflectionClass->getProperties() as $property) {
             $jormInfo = $this->convertDocCommentToJORM($property->getDocComment());
+
             if ($jormInfo['public'] === '0') {
+                if ($primaryKey < 0) {
+                    if ($jormInfo['col'] === $classJORM['primaryKeyColumn']) {
+                        $primaryKey = (int) $property->getValue($this);
+                    }
+                }
                 continue;
             }
 
@@ -101,13 +116,36 @@ class Table {
                 $desiredColumn = $jormInfo['foreignView'];
 
                 $infoToDisplay = $database->getTableCellFromForeignKey($tableName, $value, $foreignKeyColumn, $desiredColumn);
-                $retVal .= '<td>'. $infoToDisplay . '</td>';
+                $retVal .= "<td>$infoToDisplay</td>";
             } else {
-                $retVal .= '<td>'. $value . '</td>';
+                $retVal .= "<td>$value</td>";
             }
         }
 
+        $tableRoute = strtolower($classJORM['table']);
+        $retVal .= "<td><a class='edit-link' href='/$tableRoute/$primaryKey/edit'>Edit</a></td>";
+        $retVal .= "<td><a class='delete-link' href='/$tableRoute/$primaryKey/delete' onclick='return confirm(\"Are you sure?\")'>Delete</a></td>";
+
         $retVal .= '</tr>';
         return $retVal;
+    }
+
+    public static function constructRoutes(): void {
+        $jormInfo = self::getClassHeaderJORM();
+        $routeMainPath = $jormInfo['table'];
+        $primaryKey = $jormInfo['primaryKeyColumn'];
+
+        Router::add("/$routeMainPath", function() {
+            $whereClause = '';
+            if (isset($_GET['where'])) {
+                $whereClause = urldecode($_GET['where']);
+            }
+            echo self::constructViewHTMLTable($whereClause);
+        });
+
+        Router::add("/$routeMainPath/([0-9]+)", function($id) use ($primaryKey) {
+            $whereClause = "$primaryKey = $id";
+            echo self::constructViewHTMLTable($whereClause);
+        });
     }
 };
