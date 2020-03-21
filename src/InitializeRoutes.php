@@ -1,7 +1,11 @@
 <?php
 include(__DIR__ . '/Router.php');
 
+require_once(__DIR__ . '/ORM/TestTable.php');
+require_once(__DIR__ . '/ORM/ManyTable.php');
+
 TestTable::constructRoutes();
+ManyTable::constructRoutes();
 
 Router::add('/', function() {
     echo 'Welcome :-)';

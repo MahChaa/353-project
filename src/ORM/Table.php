@@ -1,5 +1,6 @@
 <?php
 
+require_once(__DIR__ . '/../HTMLUtils.php');
 
 abstract class Table {
     /**
@@ -10,7 +11,7 @@ abstract class Table {
      * @return array
      */
     private static function convertDocCommentToJORM(string $docComment): array {
-        preg_match_all('/(\w+)\s*=\s*([^,\n]+)/', $docComment, $matches);
+        preg_match_all('/(\w+)\s*=\s*([^,\n\r]+)/', $docComment, $matches);
 
         return array_combine($matches[1], $matches[2]);
     }
@@ -98,13 +99,12 @@ abstract class Table {
         foreach ($reflectionClass->getProperties() as $property) {
             $jormInfo = $this->convertDocCommentToJORM($property->getDocComment());
 
-            if ($jormInfo['public'] === '0') {
+            if (isset($jormInfo['volatile']) && $jormInfo['volatile'] === '0') {
                 if ($primaryKey < 0) {
                     if ($jormInfo['col'] === $classJORM['primaryKeyColumn']) {
                         $primaryKey = (int) $property->getValue($this);
                     }
                 }
-                continue;
             }
 
             $value = $property->getValue($this);
@@ -116,15 +116,21 @@ abstract class Table {
                 $desiredColumn = $jormInfo['foreignView'];
 
                 $infoToDisplay = $database->getTableCellFromForeignKey($tableName, $value, $foreignKeyColumn, $desiredColumn);
-                $retVal .= "<td>$infoToDisplay</td>";
+                $retVal .= '<td>' . HTMLUtils::generateManyToOneHyperlink(strtolower($tableName), $value, $infoToDisplay) . '</td>';
+            } else if (isset($jormInfo['oneToMany'])) {
+                $tableName = $jormInfo['oneToMany'];
+                $foreignKeyColumn = $jormInfo['foreignKey'];
+                $infoToDisplay = $jormInfo['view'];
+
+                $retVal .= '<td>' . HTMLUtils::generateOneToManyHyperlink($tableName, $foreignKeyColumn, $primaryKey, $infoToDisplay) . '</td>';
             } else {
                 $retVal .= "<td>$value</td>";
             }
         }
 
         $tableRoute = strtolower($classJORM['table']);
-        $retVal .= "<td><a class='edit-link' href='/$tableRoute/$primaryKey/edit'>Edit</a></td>";
-        $retVal .= "<td><a class='delete-link' href='/$tableRoute/$primaryKey/delete' onclick='return confirm(\"Are you sure?\")'>Delete</a></td>";
+        $retVal .= '<td>'. HTMLUtils::generateEditHyperlink($tableRoute, $primaryKey) . '</td>';
+        $retVal .= '<td>'. HTMLUtils::generateDeleteHyperlink($tableRoute, $primaryKey) . '</td>';
 
         $retVal .= '</tr>';
         return $retVal;

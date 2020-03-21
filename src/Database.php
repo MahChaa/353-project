@@ -42,7 +42,7 @@ class Database {
 
         $query = $select;
         if ($whereClause !== '') {
-            $query .= "WHERE $whereClause";
+            $query .= " WHERE $whereClause";
         }
         $query .= ';';
 

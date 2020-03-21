@@ -13,7 +13,8 @@ class TestTable extends Table {
      * \JORM {
      * col = test_id,
      * type = integer,
-     * public = 0
+     * header = TID,
+     * volatile = 0
      * }
      */
     public $testID;
@@ -22,7 +23,6 @@ class TestTable extends Table {
      * \JORM {
      * col = test_int,
      * type = integer,
-     * public = 1,
      * header = Test Integer
      * }
      */
@@ -32,7 +32,6 @@ class TestTable extends Table {
      * \JORM {
      * col = test_str,
      * type = string,
-     * public = 1,
      * header = Test String
      * }
      */
@@ -42,9 +41,18 @@ class TestTable extends Table {
      * \JORM {
      * col = test_date,
      * type = datetime,
-     * public = 1,
      * header = Test Date
      * }
      */
     public $testDate;
+
+    /**
+     * \JORM {
+     * oneToMany = TableMany,
+     * foreignKey = test_id,
+     * header = Test Int of another Table,
+     * view = View all Foreigners
+     * }
+     */
+    public $test_id;
 }

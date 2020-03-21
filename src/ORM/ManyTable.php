@@ -13,7 +13,8 @@ class ManyTable extends Table {
      * \JORM {
      * col = many_id,
      * type = integer,
-     * public = 0
+     * header = MID,
+     * volatile = 0
      * }
      */
     public $manyID;
@@ -21,12 +22,10 @@ class ManyTable extends Table {
     /**
      * \JORM {
      * col = test_id,
-     * type = string,
-     * public = 1,
      * manyToOne = Test,
      * foreignKey = test_id,
      * foreignView = test_str,
-     * header = Test Int of another Table
+     * header = Test Str of another Table
      * }
      */
     public $test_id;
@@ -35,7 +34,6 @@ class ManyTable extends Table {
      * \JORM {
      * col = luresubject,
      * type = string,
-     * public = 1,
      * header = LureSubject
      * }
      */

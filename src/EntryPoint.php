@@ -1,7 +1,5 @@
 <?php
 
-require_once(__DIR__ . '/ORM/TestTable.php');
-require_once(__DIR__ . '/ORM/ManyTable.php');
 require_once(__DIR__ . '/Database.php');
 
 $database = new Database();
@@ -25,6 +23,7 @@ include(__DIR__ . '/InitializeRoutes.php');
 
     .db-table {
         width: 75%;
+        min-width: 600px;
         font-size: 13px;
         text-align: center;
         border-spacing: 0;
@@ -41,7 +40,6 @@ include(__DIR__ . '/InitializeRoutes.php');
     .db-table th:first-of-type {
         border-radius: 5px 0 0 0;
         border-left: 0;
-        padding-right: 0;
     }
 
     .db-table th:last-of-type {
