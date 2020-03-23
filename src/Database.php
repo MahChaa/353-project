@@ -74,11 +74,29 @@ class Database {
      * @param string $desiredColumn
      * @return null|string
      */
-    public function getTableCellFromForeignKey($tableName, int $foreignKey, string $foreignKeyColumn, string $desiredColumn): ?string {
+    public function getTableCellFromForeignKey(string $tableName, int $foreignKey, string $foreignKeyColumn, string $desiredColumn): ?string {
         $query = "SELECT $desiredColumn AS `foreign_grabber` FROM `$tableName` WHERE $foreignKeyColumn = $foreignKey";
 
         $result = $this->connection->query($query);
         $result = $this->convertQueryToAssociativeArray($result);
         return $result[0]['foreign_grabber'];
+    }
+
+    public function createRowAndGetID(string $tableName, array $rowData, string $primaryKeyColumn): int {
+        $query = "INSERT INTO $tableName";
+        $query .= '(';
+        $query .= implode(', ', array_keys($rowData));
+        $query .= ') VALUES (';
+        $query .= implode(', ', $rowData);
+        $query .= ');';
+
+        $result = $this->connection->query($query) or die($this->connection->error);
+
+        $index = 'LAST_INSERT_ID()';
+        $query = "SELECT $index;";
+
+        $result = $this->connection->query($query);
+        $result = $this->convertQueryToAssociativeArray($result);
+        return $result[0][$index];
     }
 }

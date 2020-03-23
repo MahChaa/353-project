@@ -209,8 +209,24 @@ abstract class Table {
         });
 
         Router::add("/$routeMainPath/create", function() use ($routeMainPath)  {
-            print_r($_POST);
-//            echo self::constructCreateHTML($routeMainPath);
+            global $database;
+            unset($_POST['submit']);
+
+            // Add single quotes to strings.
+            foreach ($_POST as $key => $value) {
+                if (preg_match('/[^\d]+/', $value)) {
+                    $_POST[$key] = "'$value'";
+                }
+            }
+
+            $jormInfo = self::getClassHeaderJORM();
+            $tableName = $jormInfo['table'];
+            $primaryKey = $jormInfo['primaryKeyColumn'];
+
+            $id = $database->createRowAndGetID($tableName, $_POST, $primaryKey);
+
+            $actual_link = $_SERVER['HTTP_ORIGIN'];
+            header("Location: $actual_link/$routeMainPath/$id");
         }, "post");
     }
 };
