@@ -207,5 +207,10 @@ abstract class Table {
         Router::add("/$routeMainPath/create", function() use ($routeMainPath)  {
             echo self::constructCreateHTML($routeMainPath);
         });
+
+        Router::add("/$routeMainPath/create", function() use ($routeMainPath)  {
+            print_r($_POST);
+//            echo self::constructCreateHTML($routeMainPath);
+        }, "post");
     }
 };

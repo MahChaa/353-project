@@ -50,6 +50,14 @@ class Database {
         return $this->convertQueryToAssociativeArray($result);
     }
 
+    /**
+     * Selects the primary key and additional column to be queried from a table for assigning a row to a foreign key.
+     *
+     * @param string $tableName
+     * @param string $foreignKey
+     * @param string $foreignView
+     * @return array
+     */
     public function queryAllKeysFromTable(string $tableName, string $foreignKey, string $foreignView): array {
         $query = "SELECT $foreignKey, $foreignView FROM `$tableName`;";
         $result = $this->connection->query($query);
