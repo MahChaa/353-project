@@ -50,6 +50,13 @@ class Database {
         return $this->convertQueryToAssociativeArray($result);
     }
 
+    public function queryAllKeysFromTable(string $tableName, string $foreignKey, string $foreignView): array {
+        $query = "SELECT $foreignKey, $foreignView FROM `$tableName`;";
+        $result = $this->connection->query($query);
+
+        return $this->convertQueryToAssociativeArray($result);
+    }
+
     /**
      * Given a foreign key to a table, returns a specific cell from a row.
      *

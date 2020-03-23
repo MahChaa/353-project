@@ -71,10 +71,6 @@ abstract class Table {
 
         foreach ($reflectionClass->getProperties() as $property) {
             $jormInfo = self::convertDocCommentToJORM($property->getDocComment());
-            if ($jormInfo['public'] === '0') {
-                continue;
-            }
-
             $headerResult .= '<th>' . $jormInfo['header'] . '</th>';
         }
         $headerResult .= '<th colspan="2"></th>';
@@ -136,6 +132,60 @@ abstract class Table {
         return $retVal;
     }
 
+    private static function constructCreateHTML(string $routeMainPath): string {
+        $reflectionClass = new ReflectionClass(get_called_class());
+
+        $tableData = array();
+
+        foreach ($reflectionClass->getProperties() as $property) {
+            $row = array();
+            $jormInfo = self::convertDocCommentToJORM($property->getDocComment());
+
+            if (isset($jormInfo['volatile']) && $jormInfo['volatile'] === '0') {
+                continue;
+            }
+
+            if (isset($jormInfo['oneToMany'])) {
+                continue;
+            }
+
+            $row['header'] = $jormInfo['header'];
+            $row['name'] = $jormInfo['col'];
+
+            if (isset($jormInfo['manyToOne'])) {
+                $row['inputType'] = 'selection';
+                $row['value'] = HTMLUtils::generateManyToOneSelection($jormInfo['manyToOne'], $jormInfo['col'], $jormInfo['foreignKey'], $jormInfo['foreignView']);
+
+                array_push($tableData, $row);
+                continue;
+            }
+
+            $inputType = null;
+            switch ($jormInfo['type']) {
+                case 'integer': {
+                    $inputType = 'number';
+                } break;
+
+                case 'datetime': {
+                    $inputType = 'datetime-local';
+                } break;
+
+                default: {
+                    $inputType = 'text';
+                }
+            }
+            $row['inputType'] = $inputType;
+
+            array_push($tableData, $row);
+        }
+
+        $form = "<form method='post' action='/$routeMainPath/create'>";
+        $form .= HTMLUtils::generateEditHTMLTable($tableData);
+        $form .= '<input type="submit" name="submit" value="Submit"></form>';
+
+        return $form;
+    }
+
     public static function constructRoutes(): void {
         $jormInfo = self::getClassHeaderJORM();
         $routeMainPath = $jormInfo['table'];
@@ -152,6 +202,10 @@ abstract class Table {
         Router::add("/$routeMainPath/([0-9]+)", function($id) use ($primaryKey) {
             $whereClause = "$primaryKey = $id";
             echo self::constructViewHTMLTable($whereClause);
+        });
+
+        Router::add("/$routeMainPath/create", function() use ($routeMainPath)  {
+            echo self::constructCreateHTML($routeMainPath);
         });
     }
 };

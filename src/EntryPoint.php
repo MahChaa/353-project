@@ -31,21 +31,37 @@ include(__DIR__ . '/InitializeRoutes.php');
 
     .db-table th {
         background-color: #494c49;
-        border-left: 1px solid #878c87;
         padding: 12px;
         color: white;
         font-weight: 700;
     }
 
-    .db-table th:first-of-type {
-        border-radius: 5px 0 0 0;
-        border-left: 0;
+    .db-table:not(.db-table-vertical) th {
+        border-left: 1px solid #878c87;
     }
 
-    .db-table th:last-of-type {
-        border-radius: 0 5px 0 0;
+    .db-table.db-table-vertical th {
+        border-top: 1px solid #878c87;
+    }
+
+    .db-table:not(.db-table-vertical) th:first-of-type,
+    .db-table.db-table-vertical tr:first-of-type th {
+        border-radius: 5px 0 0 0;
+        border-left: 0;
+        border-top: 0;
+    }
+
+    .db-table:not(.db-table-vertical) th:last-of-type {
         padding-left: 0;
         padding-right: 0;
+    }
+
+    .db-table:not(.db-table-vertical) th:last-of-type {
+        border-radius: 0 5px 0 0;
+    }
+
+    .db-table.db-table-vertical tr:last-of-type th {
+        border-radius: 0 0 0 5px;
     }
 
     .db-table tr:nth-child(odd) {

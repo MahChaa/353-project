@@ -17,4 +17,43 @@ class HTMLUtils {
         $whereClause = urlencode("$foreignKeyColumn = $primaryKey");
         return "<a href='/$tableName?where=$whereClause'>$innerHTML</a>";
     }
+
+    public static function generateManyToOneSelection(string $tableName, string $column, string $foreignKey, string $foreignView): string {
+        global $database;
+        $returnHTML = "<select name='$column'>";
+
+        $queryResult = $database->queryAllKeysFromTable($tableName, $foreignKey, $foreignView);
+        foreach ($queryResult as $row) {
+            $value = $row[$foreignKey];
+            $text = $row[$foreignView];
+
+            $returnHTML .= "<option value='$value'>$text</option>";
+        }
+        
+        $returnHTML .= "</select>";
+        return $returnHTML;
+    }
+    public static function generateEditHTMLTable(array $data): string {
+        $retVal = '<table class="db-table db-table-vertical">';
+
+        foreach ($data as $row) {
+            $header = $row['header'];
+
+            $input = null;
+            if ($row['inputType'] === 'selection') {
+                $input = $row['value'];
+            } else {
+                $inputType = $row['inputType'];
+                $name = $row['name'];
+                $defaultValue = isset($row['value']) ? $row['value'] : '';
+                $input = "<input type='$inputType' name='$name' value='$defaultValue'>";
+            }
+
+            $retVal .= "<tr><th>$header</th><td>$input</td></tr>";
+        }
+
+        $retVal .= '</table>';
+
+        return $retVal;
+    }
 }
