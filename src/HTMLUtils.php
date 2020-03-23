@@ -20,7 +20,7 @@ class HTMLUtils {
 
     public static function generateManyToOneSelection(string $tableName, string $column, string $foreignKey, string $foreignView): string {
         global $database;
-        $returnHTML = "<select name='$column'>";
+        $returnHTML = "<select name='$column'><option value=''>None</option>";
 
         $queryResult = $database->queryAllKeysFromTable($tableName, $foreignKey, $foreignView);
         foreach ($queryResult as $row) {

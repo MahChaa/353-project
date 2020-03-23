@@ -30,6 +30,11 @@ abstract class Table {
 
         foreach ($reflectionClass->getProperties() as $property) {
             $jormInfo = $this->convertDocCommentToJORM($property->getDocComment());
+
+            if (isset($jormInfo['oneToMany'])) {
+                continue;
+            }
+
             $dbColumn = $jormInfo['col'];
 
             $property->setValue($this, $row[$dbColumn]);
@@ -212,11 +217,18 @@ abstract class Table {
             global $database;
             unset($_POST['submit']);
 
-            // Add single quotes to strings.
+            // Add single quotes to strings and remove empty fields.
+            $unsetArr = array();
             foreach ($_POST as $key => $value) {
                 if (preg_match('/[^\d]+/', $value)) {
                     $_POST[$key] = "'$value'";
                 }
+                if ($value === null || $value === '') {
+                    array_push($unsetArr, $key);
+                }
+            }
+            foreach ($unsetArr as $data) {
+                unset($_POST[$data]);
             }
 
             $jormInfo = self::getClassHeaderJORM();
