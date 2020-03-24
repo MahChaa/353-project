@@ -18,7 +18,7 @@ class HTMLUtils {
         return "<a href='/$tableName?where=$whereClause'>$innerHTML</a>";
     }
 
-    public static function generateManyToOneSelection(string $tableName, string $column, string $foreignKey, string $foreignView): string {
+    public static function generateManyToOneSelection(string $tableName, string $column, string $foreignKey, string $foreignView, string $defaultValue): string {
         global $database;
         $returnHTML = "<select name='$column'><option value=''>None</option>";
 
@@ -26,13 +26,15 @@ class HTMLUtils {
         foreach ($queryResult as $row) {
             $value = $row[$foreignKey];
             $text = $row[$foreignView];
+            $selected  = $defaultValue === $value ? ' selected' : '';
 
-            $returnHTML .= "<option value='$value'>$text</option>";
+            $returnHTML .= "<option value='$value'$selected>$text</option>";
         }
         
         $returnHTML .= "</select>";
         return $returnHTML;
     }
+
     public static function generateEditHTMLTable(array $data): string {
         $retVal = '<table class="db-table db-table-vertical">';
 
@@ -46,6 +48,12 @@ class HTMLUtils {
                 $inputType = $row['inputType'];
                 $name = $row['name'];
                 $defaultValue = isset($row['value']) ? $row['value'] : '';
+
+                // datetime-local only accepts timestamps that have a 'T' separating the date and time.
+                if ($inputType === 'datetime-local') {
+                    $defaultValue = str_replace(' ', 'T', $defaultValue);
+                }
+
                 $input = "<input type='$inputType' name='$name' value='$defaultValue'>";
             }
 

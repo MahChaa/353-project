@@ -82,7 +82,7 @@ class Database {
         return $result[0]['foreign_grabber'];
     }
 
-    public function createRowAndGetID(string $tableName, array $rowData, string $primaryKeyColumn): int {
+    public function createRowAndGetID(string $tableName, array $rowData): int {
         $query = "INSERT INTO $tableName";
         $query .= '(';
         $query .= implode(', ', array_keys($rowData));
@@ -98,5 +98,22 @@ class Database {
         $result = $this->connection->query($query);
         $result = $this->convertQueryToAssociativeArray($result);
         return $result[0][$index];
+    }
+
+    public function updateRow(string $tableName, string $primaryKeyColumn, string $primaryKey, array $updateData): void {
+        $query = "UPDATE $tableName";
+
+        $setClauses = array();
+        foreach ($_POST as $column => $value) {
+            if ($value === "''") {
+                $value = 'NULL';
+            }
+            array_push($setClauses, "$column = $value");
+        }
+        $setClauses = 'SET ' . implode(', ', $setClauses);
+        $whereClause = "WHERE $primaryKeyColumn = $primaryKey";
+
+        $query .= " $setClauses $whereClause";
+        $this->connection->query($query) or die($this->connection->error);
     }
 }

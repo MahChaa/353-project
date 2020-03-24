@@ -137,7 +137,7 @@ abstract class Table {
         return $retVal;
     }
 
-    private static function constructCreateHTML(string $routeMainPath): string {
+    private static function constructEditHTML(Table $instance = null): string {
         $reflectionClass = new ReflectionClass(get_called_class());
 
         $tableData = array();
@@ -158,11 +158,20 @@ abstract class Table {
             $row['name'] = $jormInfo['col'];
 
             if (isset($jormInfo['manyToOne'])) {
+                $defaultValue = '';
+                if ($instance !== null) {
+                    $defaultValue = $property->getValue($instance);
+                }
+
                 $row['inputType'] = 'selection';
-                $row['value'] = HTMLUtils::generateManyToOneSelection($jormInfo['manyToOne'], $jormInfo['col'], $jormInfo['foreignKey'], $jormInfo['foreignView']);
+                $row['value'] = HTMLUtils::generateManyToOneSelection($jormInfo['manyToOne'], $jormInfo['col'], $jormInfo['foreignKey'], $jormInfo['foreignView'], $defaultValue);
 
                 array_push($tableData, $row);
                 continue;
+            }
+
+            if ($instance !== null) {
+                $row['value'] = $property->getValue($instance);
             }
 
             $inputType = null;
@@ -184,7 +193,7 @@ abstract class Table {
             array_push($tableData, $row);
         }
 
-        $form = "<form method='post' action='/$routeMainPath/create'>";
+        $form = "<form method='post' action=''>";
         $form .= HTMLUtils::generateEditHTMLTable($tableData);
         $form .= '<input type="submit" name="submit" value="Submit"></form>';
 
@@ -209,8 +218,60 @@ abstract class Table {
             echo self::constructViewHTMLTable($whereClause);
         });
 
+        Router::add("/$routeMainPath/([0-9]+)/edit", function($id) use ($routeMainPath, $primaryKey)  {
+            $instance = self::convertPrimaryKeyToInstance($routeMainPath, $primaryKey, $id);
+            if ($instance === null) {
+                echo('Entry with ID "' . $id . '" does not exist!');
+                return;
+            }
+
+            echo self::constructEditHTML($instance);
+        });
+
+        Router::add("/$routeMainPath/([0-9]+)/edit", function($id) use ($routeMainPath, $primaryKey)  {
+            global $database;
+
+            $instance = self::convertPrimaryKeyToInstance($routeMainPath, $primaryKey, $id);
+            if ($instance === null) {
+                echo('Entry with ID "' . $id . '" does not exist!');
+                return;
+            }
+            $reflectionClass = new ReflectionClass($instance);
+
+            unset($_POST['submit']);
+            $unsetArr = array();
+            foreach ($reflectionClass->getProperties() as $property) {
+                $jormInfo = self::convertDocCommentToJORM($property->getDocComment());
+                if (isset($jormInfo['oneToMany']) || (isset($jormInfo['volatile']) && $jormInfo['volatile'] === '0')) {
+                    continue;
+                }
+
+                $value = $property->getValue($instance);
+                if ($value === $_POST[$jormInfo['col']] || ($value === null && $_POST[$jormInfo['col']] === '')) {
+                    array_push($unsetArr, $jormInfo['col']);
+                }
+            }
+
+            foreach ($unsetArr as $data) {
+                unset($_POST[$data]);
+            }
+
+            foreach ($_POST as $key => $value) {
+                if ($value === '' || preg_match('/[^\d]+/', $value)) {
+                    $_POST[$key] = "'$value'";
+                }
+            }
+
+            if (count($_POST) > 0) {
+                $database->updateRow($routeMainPath, $primaryKey, $id, $_POST);
+            }
+
+            $actualLink = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+            header("Location: $actualLink/$routeMainPath/$id");
+        }, "post");
+
         Router::add("/$routeMainPath/create", function() use ($routeMainPath)  {
-            echo self::constructCreateHTML($routeMainPath);
+            echo self::constructEditHTML();
         });
 
         Router::add("/$routeMainPath/create", function() use ($routeMainPath)  {
@@ -227,18 +288,30 @@ abstract class Table {
                     array_push($unsetArr, $key);
                 }
             }
+
             foreach ($unsetArr as $data) {
                 unset($_POST[$data]);
             }
 
-            $jormInfo = self::getClassHeaderJORM();
-            $tableName = $jormInfo['table'];
-            $primaryKey = $jormInfo['primaryKeyColumn'];
-
-            $id = $database->createRowAndGetID($tableName, $_POST, $primaryKey);
-
-            $actual_link = $_SERVER['HTTP_ORIGIN'];
-            header("Location: $actual_link/$routeMainPath/$id");
+            $id = $database->createRowAndGetID($routeMainPath, $_POST);
+            $actualLink = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+            header("Location: $actualLink/$routeMainPath/$id");
         }, "post");
     }
-};
+
+    private static function convertPrimaryKeyToInstance(string $tableName, string $primaryKeyColumn, int $primaryKey): Table {
+        global $database;
+
+        $whereClause = "$primaryKeyColumn = $primaryKey";
+        $result = $database->queryAllRowsFromTable($tableName, $whereClause);
+        if (count($result) < 1) {
+            return null;
+        }
+
+        $reflectionClass = new ReflectionClass(get_called_class());
+        /* @var Table $instance */
+        $instance = $reflectionClass->newInstance();
+        $instance->convertRelationToObject($result[0]);
+        return $instance;
+    }
+}
