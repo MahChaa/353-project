@@ -26,9 +26,9 @@ class HTMLUtils {
         foreach ($queryResult as $row) {
             $value = $row[$foreignKey];
             $text = $row[$foreignView];
-            $selected  = $defaultValue === $value ? ' selected' : '';
+            $selected  = $defaultValue === $value ? 'selected' : '';
 
-            $returnHTML .= "<option value='$value'$selected>$text</option>";
+            $returnHTML .= "<option value='$value' $selected>$text</option>";
         }
         
         $returnHTML .= "</select>";
@@ -48,13 +48,17 @@ class HTMLUtils {
                 $inputType = $row['inputType'];
                 $name = $row['name'];
                 $defaultValue = isset($row['value']) ? $row['value'] : '';
+                $required = isset($row['required']) && $row['required'] ? ' required' : '';
 
                 // datetime-local only accepts timestamps that have a 'T' separating the date and time.
                 if ($inputType === 'datetime-local') {
                     $defaultValue = str_replace(' ', 'T', $defaultValue);
                 }
 
-                $input = "<input type='$inputType' name='$name' value='$defaultValue'>";
+                $input = "<input$required type='$inputType' name='$name' value='$defaultValue'>";
+                if (isset($row['required']) && $row['required']) {
+                    $input .= '<span class="required">*</span>';
+                }
             }
 
             $retVal .= "<tr><th>$header</th><td>$input</td></tr>";

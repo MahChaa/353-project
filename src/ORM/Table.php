@@ -170,6 +170,10 @@ abstract class Table {
                 continue;
             }
 
+            if (isset($jormInfo['nullable'])) {
+                $row['required'] = $jormInfo['nullable'] === '0';
+            }
+
             if ($instance !== null) {
                 $row['value'] = $property->getValue($instance);
             }

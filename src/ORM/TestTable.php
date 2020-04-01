@@ -32,7 +32,8 @@ class TestTable extends Table {
      * \JORM {
      * col = test_str,
      * type = string,
-     * header = Test String
+     * header = Test String,
+     * nullable = 0
      * }
      */
     public $testStr;

@@ -21,6 +21,10 @@ include(__DIR__ . '/InitializeRoutes.php');
         color: red;
     }
 
+    .required {
+        color: red;
+    }
+
     .db-table {
         width: 75%;
         min-width: 600px;
