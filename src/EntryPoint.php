@@ -25,6 +25,43 @@ include(__DIR__ . '/InitializeRoutes.php');
         color: red;
     }
 
+    .hyperlink-btn {
+        align-items: normal;
+        background-color: rgba(0,0,0,0);
+        border-color: rgb(0, 0, 238);
+        border-style: none;
+        box-sizing: content-box;
+        cursor: pointer;
+        display: inline;
+        font: inherit;
+        height: auto;
+        padding: 0;
+        perspective-origin: 0 0;
+        text-align: start;
+        text-decoration: underline;
+        transform-origin: 0 0;
+        width: auto;
+        -moz-appearance: none;
+    }
+
+    /* Mozilla uses a pseudo-element to show focus on buttons, */
+    /* but anchors are highlighted via the focus pseudo-class. */
+
+    @supports (-moz-appearance:none) { /* Mozilla-only */
+        .hyperlink-btn::-moz-focus-inner { /* reset any predefined properties */
+            border: none;
+            padding: 0;
+        }
+        .hyperlink-btn:focus { /* add outline to focus pseudo-class */
+            outline-style: dotted;
+            outline-width: 1px;
+        }
+    }
+
+    .delete-form {
+        display: inline;
+    }
+
     .db-table {
         width: 75%;
         min-width: 600px;

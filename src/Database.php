@@ -114,6 +114,12 @@ class Database {
         $whereClause = "WHERE $primaryKeyColumn = $primaryKey";
 
         $query .= " $setClauses $whereClause";
+        $query .= " $setClauses $whereClause";
+        $this->connection->query($query) or die($this->connection->error);
+    }
+
+    public function deleteRow(string $tableName, string $primaryKeyColumn, string $primaryKey): void {
+        $query = "DELETE FROM $tableName WHERE $primaryKeyColumn = $primaryKey";
         $this->connection->query($query) or die($this->connection->error);
     }
 }

@@ -6,7 +6,11 @@ class HTMLUtils {
     }
 
     public static function generateDeleteHyperlink(string $tableRoute, string $primaryKey): string {
-        return "<a class='delete-link' href='/$tableRoute/$primaryKey/delete' onclick='return confirm(\"Are you sure ? \")'>Delete</a>";
+        $form = "<form class='delete-form' method='post' action='/$tableRoute/$primaryKey/delete'>";
+        $form .="<input type='submit' class='hyperlink-btn delete-link' onclick='return confirm(\"Are you sure ? \")' value='Delete'>";
+        $form .= '</form>';
+
+        return $form;
     }
 
     public static function generateManyToOneHyperlink(string $tableName, string $foreignKey, string $innerHTML): string {

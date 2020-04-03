@@ -197,7 +197,7 @@ abstract class Table {
             array_push($tableData, $row);
         }
 
-        $form = "<form method='post' action=''>";
+        $form = '<form method="post" action="">';
         $form .= HTMLUtils::generateEditHTMLTable($tableData);
         $form .= '<input type="submit" name="submit" value="Submit"></form>';
 
@@ -300,6 +300,14 @@ abstract class Table {
             $id = $database->createRowAndGetID($routeMainPath, $_POST);
             $actualLink = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
             header("Location: $actualLink/$routeMainPath/$id");
+        }, "post");
+
+        Router::add("/$routeMainPath/([0-9]+)/delete", function($id) use ($routeMainPath, $primaryKey)  {
+            global $database;
+            $database->deleteRow($routeMainPath, $primaryKey, $id);
+
+            $actualLink = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+            header("Location: $actualLink/$routeMainPath");
         }, "post");
     }
 
