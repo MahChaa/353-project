@@ -63,7 +63,7 @@ include(__DIR__ . '/InitializeRoutes.php');
     }
 
     .db-table {
-        width: 75%;
+        width: 100%;
         min-width: 600px;
         font-size: 13px;
         text-align: center;
