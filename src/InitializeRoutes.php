@@ -16,6 +16,15 @@ $tables[] = Dentist::constructRoutes();
 require_once(__DIR__ . '/ORM/Data/Receptionist.php');
 $tables[] = Receptionist::constructRoutes();
 
+require_once(__DIR__ . '/ORM/Data/Appointment.php');
+$tables[] = Appointment::constructRoutes();
+
+require_once(__DIR__ . '/ORM/Data/Treatment.php');
+$tables[] = Treatment::constructRoutes();
+
+require_once(__DIR__ . '/ORM/Data/Bill.php');
+$tables[] = Bill::constructRoutes();
+
 Router::add('/', function() use ($tables) {
     echo 'Welcome :-)<br><br>';
 
