@@ -21,7 +21,7 @@ class Clinic extends Table {
 
     /**
      * \JORM {
-     * col = id,
+     * col = name,
      * type = string,
      * header = Full Name,
      * nullable = 0
@@ -60,7 +60,7 @@ class Clinic extends Table {
     /**
      * \JORM {
      * oneToMany = Dentist,
-     * foreignKey = id,
+     * foreignKey = clinic_id,
      * header = Dentists,
      * view = View all Dentists
      * }
@@ -70,7 +70,7 @@ class Clinic extends Table {
     /**
      * \JORM {
      * oneToMany = Receptionist,
-     * foreignKey = id,
+     * foreignKey = clinic_id,
      * header = Receptionists,
      * view = View all Receptionists
      * }
@@ -80,7 +80,7 @@ class Clinic extends Table {
     /**
      * \JORM {
      * oneToMany = Appointment,
-     * foreignKey = id,
+     * foreignKey = clinic_id,
      * header = Appointments,
      * view = View all Appointments
      * }
@@ -90,7 +90,7 @@ class Clinic extends Table {
     /**
      * \JORM {
      * oneToMany = Bill,
-     * foreignKey = id,
+     * foreignKey = clinic_id,
      * header = Bills,
      * view = View all Bills
      * }
