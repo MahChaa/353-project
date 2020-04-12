@@ -78,4 +78,34 @@ class Dentist extends Table {
      * }
      */
     public $clinic;
+
+    /**
+     * \JORM {
+     * oneToMany = Appointment,
+     * foreignKey = dentist_id,
+     * header = Appointments,
+     * view = View all Appointments
+     * }
+     */
+    public $appointments;
+
+    /**
+     * \JORM {
+     * oneToMany = Appointment,
+     * foreignKey = assigned_to_dentist_id,
+     * header = Assigned To,
+     * view = View all Assignments
+     * }
+     */
+    public $assignedTo;
+
+    /**
+     * \JORM {
+     * oneToMany = Appointment,
+     * foreignKey = assigned_by_dentist_id,
+     * header = Assigner,
+     * view = View all Assignments
+     * }
+     */
+    public $assignedBy;
 }

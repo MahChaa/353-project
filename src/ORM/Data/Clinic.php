@@ -86,4 +86,14 @@ class Clinic extends Table {
      * }
      */
     public $appointments;
+
+    /**
+     * \JORM {
+     * oneToMany = Bill,
+     * foreignKey = id,
+     * header = Bills,
+     * view = View all Bills
+     * }
+     */
+    public $bills;
 }
