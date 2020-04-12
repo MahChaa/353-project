@@ -204,7 +204,7 @@ abstract class Table {
         return $form;
     }
 
-    public static function constructRoutes(): void {
+    public static function constructRoutes(): string {
         $jormInfo = self::getClassHeaderJORM();
         $routeMainPath = $jormInfo['table'];
         $primaryKey = $jormInfo['primaryKeyColumn'];
@@ -309,6 +309,8 @@ abstract class Table {
             $actualLink = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
             header("Location: $actualLink/$routeMainPath");
         }, "post");
+
+        return $routeMainPath;
     }
 
     private static function convertPrimaryKeyToInstance(string $tableName, string $primaryKeyColumn, int $primaryKey): Table {

@@ -1,11 +1,25 @@
 <?php
 include(__DIR__ . '/Router.php');
 
-require_once(__DIR__ . '/ORM/Data/Patient.php');
-Patient::constructRoutes();
+/* @var string[] $tables */
+$tables = array();
 
-Router::add('/', function() {
-    echo 'Welcome :-)';
+require_once(__DIR__ . '/ORM/Data/Patient.php');
+$tables[] = Patient::constructRoutes();
+
+require_once(__DIR__ . '/ORM/Data/Clinic.php');
+$tables[] = Clinic::constructRoutes();
+
+require_once(__DIR__ . '/ORM/Data/Dentist.php');
+$tables[] = Dentist::constructRoutes();
+
+Router::add('/', function() use ($tables) {
+    echo 'Welcome :-)<br><br>';
+
+    foreach ($tables as $table) {
+        $name = ucfirst($table);
+        echo "<a href='/$table'>$name</a><br>";
+    }
 });
 
 // Add a 404 not found route

@@ -4,11 +4,11 @@ require_once(__DIR__ . '/../Table.php');
 
 /**
  * \JORM {
- * table = Patient,
+ * table = Dentist,
  * primaryKeyColumn = id
  * }
  */
-class Patient extends Table {
+class Dentist extends Table {
     /**
      * \JORM {
      * col = id,
@@ -21,7 +21,7 @@ class Patient extends Table {
 
     /**
      * \JORM {
-     * col = name,
+     * col = id,
      * type = string,
      * header = Full Name,
      * nullable = 0
@@ -31,19 +31,10 @@ class Patient extends Table {
 
     /**
      * \JORM {
-     * col = date_of_birth,
-     * type = date,
-     * header = DoB,
-     * nullable = 0
-     * }
-     */
-    public $birth;
-
-    /**
-     * \JORM {
      * col = address,
      * type = string,
-     * header = Address
+     * header = Address,
+     * nullable = 0
      * }
      */
     public $address;
@@ -69,11 +60,22 @@ class Patient extends Table {
 
     /**
      * \JORM {
-     * oneToMany = Appointment,
-     * foreignKey = id,
-     * header = Appointments,
-     * view = View all Appointments
+     * col = is_assistant,
+     * type = integer,
+     * header = Assistant?,
+     * nullable = 0
      * }
      */
-    public $appointments;
+    public $isAssistant;
+
+    /**
+     * \JORM {
+     * col = clinic_id,
+     * manyToOne = Clinic,
+     * foreignKey = id,
+     * foreignView = name,
+     * header = Clinic
+     * }
+     */
+    public $clinic;
 }
