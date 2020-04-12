@@ -133,14 +133,14 @@ INSERT INTO `Treatment`(`id`, `name`, `cost`, `appointment_id`, `bill_id`, `assi
                         `assigned_to_dentist_id`)
 VALUES (NULL, 'Dental Implants', 5300.95, 1, 1, 1, 10),
        (NULL, 'Tooth Whitening', 150.99, 2, 2, 1, 9),
-       (NULL, 'Crowns', 500.50, 3, 3, 3, 8),
-       (NULL, 'Orthodontic Braces', 7800.00, 4, 4, 3, 7),
+       (NULL, 'Crowns', 500.50, 3, 3, 4, 8),
+       (NULL, 'Orthodontic Braces', 7800.00, 4, 4, 4, 7),
        (NULL, 'Bridges', 780.00, 5, 5, 5, 6),
        (NULL, 'Dentures', 10800.30, 5, 5, 5, 5),
        (NULL, 'Examination', 100.00, 6, 6, 7, 4),
        (NULL, 'Root Canal', 230.00, 6, 6, 7, 3),
-       (NULL, 'Gum Treatment', 200.60, 4, 4, 9, 2),
-       (NULL, 'Wisdom Tooth Extraction', 610.00, 1, 1, 9, 1);
+       (NULL, 'Gum Treatment', 200.60, 4, 4, 2, 2),
+       (NULL, 'Wisdom Tooth Extraction', 610.00, 1, 1, 8, 1);
 
 INSERT INTO `Appointment`(`id`, `date_time`, `was_missed`, `receptionist_id`, `clinic_id`, `patient_id`, `dentist_id`)
 VALUES (NULL, '2017-02-27', NULL, 1, 1, 1, NULL),
