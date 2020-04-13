@@ -46,7 +46,7 @@ class Database {
         }
         $query .= ';';
 
-        $result = $this->connection->query($query);
+        $result = $this->connection->query($query) or die($this->connection->error);
         return $this->convertQueryToAssociativeArray($result);
     }
 

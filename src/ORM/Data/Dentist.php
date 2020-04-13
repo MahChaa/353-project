@@ -91,7 +91,7 @@ class Dentist extends Table {
 
     /**
      * \JORM {
-     * oneToMany = Appointment,
+     * oneToMany = Treatment,
      * foreignKey = assigned_to_dentist_id,
      * header = Assigned To,
      * view = View all Assignments
@@ -101,7 +101,7 @@ class Dentist extends Table {
 
     /**
      * \JORM {
-     * oneToMany = Appointment,
+     * oneToMany = Treatment,
      * foreignKey = assigned_by_dentist_id,
      * header = Assigner,
      * view = View all Assignments
