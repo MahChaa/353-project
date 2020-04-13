@@ -172,6 +172,9 @@ abstract class Table {
                 $defaultValue = '';
                 if ($instance !== null) {
                     $defaultValue = $property->getValue($instance);
+                    if ($defaultValue === null) {
+                        $defaultValue = '';
+                    }
                 }
 
                 $row['inputType'] = 'selection';
