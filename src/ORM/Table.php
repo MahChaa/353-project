@@ -182,6 +182,20 @@ abstract class Table {
 
                 array_push($tableData, $row);
                 continue;
+            } else if ($jormInfo['type'] === 'boolean') {
+                $defaultValue = '';
+                if ($instance !== null) {
+                    $defaultValue = $property->getValue($instance);
+                    if ($defaultValue === null) {
+                        $defaultValue = '';
+                    }
+                }
+
+                $row['inputType'] = 'selection';
+                $row['value'] = HTMLUtils::generateBooleanSelection($jormInfo['col'], $defaultValue, $row['required']);
+
+                array_push($tableData, $row);
+                continue;
             }
 
             if ($instance !== null) {
@@ -200,11 +214,6 @@ abstract class Table {
 
                 case 'date': {
                     $inputType = 'date';
-                } break;
-
-                case 'boolean': {
-                    $inputType = 'checkbox';
-                    $row['value'] = '1';
                 } break;
 
                 default: {
@@ -271,16 +280,6 @@ abstract class Table {
                 }
 
                 $value = $property->getValue($instance);
-
-                // Checkboxes only send a value if they're checked.
-                if (!isset($jormInfo['manyToOne']) && $jormInfo['type'] === 'boolean') {
-                    if (isset($_POST[$jormInfo['col']])) {
-                        $_POST[$jormInfo['col']] = '1';
-                    } else {
-                        $_POST[$jormInfo['col']] = '0';
-                    }
-                    continue;
-                }
 
                 if ($value === $_POST[$jormInfo['col']] || ($value === null && $_POST[$jormInfo['col']] === '')) {
                     array_push($unsetArr, $jormInfo['col']);

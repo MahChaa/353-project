@@ -62,7 +62,8 @@ class Dentist extends Table {
      * \JORM {
      * col = is_assistant,
      * type = boolean,
-     * header = Assistant?
+     * header = Assistant?,
+     * nullable = 0
      * }
      */
     public $isAssistant;

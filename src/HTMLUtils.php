@@ -38,7 +38,40 @@ class HTMLUtils {
 
             $returnHTML .= "<option value='$value' $selected>$text</option>";
         }
-        
+
+        $returnHTML .= "</select>";
+        if ($required) {
+            $returnHTML .= '<span class="required">*</span>';
+        }
+
+        return $returnHTML;
+    }
+
+    public static function generateBooleanSelection(string $column, string $defaultValue, bool $required): string {
+        $returnHTML = '<select';
+        if ($required) {
+            $returnHTML .= ' required';
+        }
+        $returnHTML .= " name='$column'>";
+
+        if ($defaultValue === null) {
+            $returnHTML .= '<option selected value="">None</option>';
+        } else {
+            $returnHTML .= '<option value="">None</option>';
+        }
+
+        if ($defaultValue === '1') {
+            $returnHTML .= '<option selected value="1">Yes</option>';
+        } else {
+            $returnHTML .= '<option value="1">Yes</option>';
+        }
+
+        if ($defaultValue === '0') {
+            $returnHTML .= '<option selected value="0">No</option>';
+        } else {
+            $returnHTML .= '<option value="0">No</option>';
+        }
+
         $returnHTML .= "</select>";
         if ($required) {
             $returnHTML .= '<span class="required">*</span>';
@@ -65,8 +98,6 @@ class HTMLUtils {
                 // datetime-local only accepts timestamps that have a 'T' separating the date and time.
                 if ($inputType === 'datetime-local') {
                     $defaultValue = str_replace(' ', 'T', $defaultValue);
-                } else if ($inputType === 'checkbox' && $defaultValue === '1') {
-                    $required .= ' checked';
                 }
 
                 $input = "<input$required type='$inputType' name='$name' value='$defaultValue'>";
