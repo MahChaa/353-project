@@ -157,6 +157,12 @@ abstract class Table {
             $row['header'] = $jormInfo['header'];
             $row['name'] = $jormInfo['col'];
 
+            if (isset($jormInfo['nullable'])) {
+                $row['required'] = $jormInfo['nullable'] === '0';
+            } else {
+                $row['required'] = false;
+            }
+
             if (isset($jormInfo['manyToOne'])) {
                 $defaultValue = '';
                 if ($instance !== null) {
@@ -164,14 +170,10 @@ abstract class Table {
                 }
 
                 $row['inputType'] = 'selection';
-                $row['value'] = HTMLUtils::generateManyToOneSelection($jormInfo['manyToOne'], $jormInfo['col'], $jormInfo['foreignKey'], $jormInfo['foreignView'], $defaultValue);
+                $row['value'] = HTMLUtils::generateManyToOneSelection($jormInfo['manyToOne'], $jormInfo['col'], $jormInfo['foreignKey'], $jormInfo['foreignView'], $defaultValue, $row['required']);
 
                 array_push($tableData, $row);
                 continue;
-            }
-
-            if (isset($jormInfo['nullable'])) {
-                $row['required'] = $jormInfo['nullable'] === '0';
             }
 
             if ($instance !== null) {
@@ -186,6 +188,14 @@ abstract class Table {
 
                 case 'datetime': {
                     $inputType = 'datetime-local';
+                } break;
+
+                case 'date': {
+                    $inputType = 'date';
+                } break;
+
+                case 'boolean': {
+                    $inputType = 'checkbox';
                 } break;
 
                 default: {

@@ -114,7 +114,6 @@ class Database {
         $whereClause = "WHERE $primaryKeyColumn = $primaryKey";
 
         $query .= " $setClauses $whereClause";
-        $query .= " $setClauses $whereClause";
         $this->connection->query($query) or die($this->connection->error);
     }
 
