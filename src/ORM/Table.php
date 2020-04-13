@@ -204,6 +204,7 @@ abstract class Table {
 
                 case 'boolean': {
                     $inputType = 'checkbox';
+                    $row['value'] = '1';
                 } break;
 
                 default: {
