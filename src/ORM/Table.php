@@ -113,6 +113,7 @@ abstract class Table {
             // If the column is a foreign key then we need to figure out what it wants.
             if (isset($jormInfo['manyToOne'])) {
                 if ($value === null) {
+                    $retVal .= '<td></td>';
                     continue;
                 }
 

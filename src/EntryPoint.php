@@ -13,6 +13,10 @@ include(__DIR__ . '/InitializeRoutes.php');
         background-color: teal;
     }
 
+    a:visited {
+        color: blue;
+    }
+
     .edit-link, .edit-link:visited {
         color: blue;
     }
