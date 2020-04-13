@@ -13,7 +13,7 @@ class Dentist extends Table {
      * \JORM {
      * col = id,
      * type = integer,
-     * header = PID,
+     * header = DID,
      * volatile = 0
      * }
      */
@@ -21,7 +21,7 @@ class Dentist extends Table {
 
     /**
      * \JORM {
-     * col = id,
+     * col = name,
      * type = string,
      * header = Full Name,
      * nullable = 0

@@ -13,7 +13,7 @@ class Clinic extends Table {
      * \JORM {
      * col = id,
      * type = integer,
-     * header = PID,
+     * header = CID,
      * volatile = 0
      * }
      */

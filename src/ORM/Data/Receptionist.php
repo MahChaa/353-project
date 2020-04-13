@@ -13,7 +13,7 @@ class Receptionist extends Table {
      * \JORM {
      * col = id,
      * type = integer,
-     * header = PID,
+     * header = RID,
      * volatile = 0
      * }
      */

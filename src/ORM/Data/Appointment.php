@@ -13,7 +13,7 @@ class Appointment extends Table {
      * \JORM {
      * col = id,
      * type = integer,
-     * header = PID,
+     * header = AID,
      * volatile = 0
      * }
      */

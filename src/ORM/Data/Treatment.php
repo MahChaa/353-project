@@ -13,7 +13,7 @@ class Treatment extends Table {
      * \JORM {
      * col = id,
      * type = integer,
-     * header = PID,
+     * header = TID,
      * volatile = 0
      * }
      */
