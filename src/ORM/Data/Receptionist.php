@@ -21,7 +21,7 @@ class Receptionist extends Table {
 
     /**
      * \JORM {
-     * col = id,
+     * col = name,
      * type = string,
      * header = Full Name,
      * nullable = 0

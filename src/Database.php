@@ -46,7 +46,7 @@ class Database {
         }
         $query .= ';';
 
-        $result = $this->connection->query($query);
+        $result = $this->connection->query($query) or die($this->connection->error);
         return $this->convertQueryToAssociativeArray($result);
     }
 
@@ -113,7 +113,6 @@ class Database {
         $setClauses = 'SET ' . implode(', ', $setClauses);
         $whereClause = "WHERE $primaryKeyColumn = $primaryKey";
 
-        $query .= " $setClauses $whereClause";
         $query .= " $setClauses $whereClause";
         $this->connection->query($query) or die($this->connection->error);
     }

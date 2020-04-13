@@ -13,6 +13,10 @@ include(__DIR__ . '/InitializeRoutes.php');
         background-color: teal;
     }
 
+    a:visited {
+        color: blue;
+    }
+
     .edit-link, .edit-link:visited {
         color: blue;
     }
@@ -63,7 +67,7 @@ include(__DIR__ . '/InitializeRoutes.php');
     }
 
     .db-table {
-        width: 75%;
+        width: 100%;
         min-width: 600px;
         font-size: 13px;
         text-align: center;

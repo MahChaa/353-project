@@ -112,6 +112,11 @@ abstract class Table {
 
             // If the column is a foreign key then we need to figure out what it wants.
             if (isset($jormInfo['manyToOne'])) {
+                if ($value === null) {
+                    $retVal .= '<td></td>';
+                    continue;
+                }
+
                 $tableName = $jormInfo['manyToOne'];
                 $foreignKeyColumn = $jormInfo['foreignKey'];
                 $desiredColumn = $jormInfo['foreignView'];
@@ -157,21 +162,26 @@ abstract class Table {
             $row['header'] = $jormInfo['header'];
             $row['name'] = $jormInfo['col'];
 
+            if (isset($jormInfo['nullable'])) {
+                $row['required'] = $jormInfo['nullable'] === '0';
+            } else {
+                $row['required'] = false;
+            }
+
             if (isset($jormInfo['manyToOne'])) {
                 $defaultValue = '';
                 if ($instance !== null) {
                     $defaultValue = $property->getValue($instance);
+                    if ($defaultValue === null) {
+                        $defaultValue = '';
+                    }
                 }
 
                 $row['inputType'] = 'selection';
-                $row['value'] = HTMLUtils::generateManyToOneSelection($jormInfo['manyToOne'], $jormInfo['col'], $jormInfo['foreignKey'], $jormInfo['foreignView'], $defaultValue);
+                $row['value'] = HTMLUtils::generateManyToOneSelection($jormInfo['manyToOne'], $jormInfo['col'], $jormInfo['foreignKey'], $jormInfo['foreignView'], $defaultValue, $row['required']);
 
                 array_push($tableData, $row);
                 continue;
-            }
-
-            if (isset($jormInfo['nullable'])) {
-                $row['required'] = $jormInfo['nullable'] === '0';
             }
 
             if ($instance !== null) {
@@ -186,6 +196,14 @@ abstract class Table {
 
                 case 'datetime': {
                     $inputType = 'datetime-local';
+                } break;
+
+                case 'date': {
+                    $inputType = 'date';
+                } break;
+
+                case 'boolean': {
+                    $inputType = 'checkbox';
                 } break;
 
                 default: {
@@ -209,11 +227,12 @@ abstract class Table {
         $routeMainPath = $jormInfo['table'];
         $primaryKey = $jormInfo['primaryKeyColumn'];
 
-        Router::add("/$routeMainPath", function() {
+        Router::add("/$routeMainPath", function() use ($routeMainPath) {
             $whereClause = '';
             if (isset($_GET['where'])) {
                 $whereClause = urldecode($_GET['where']);
             }
+            echo "<a href='/$routeMainPath/create'><input type='button' value='Add new row'></a><br>";
             echo self::constructViewHTMLTable($whereClause);
         });
 
@@ -251,6 +270,17 @@ abstract class Table {
                 }
 
                 $value = $property->getValue($instance);
+
+                // Checkboxes only send a value if they're checked.
+                if (!isset($jormInfo['manyToOne']) && $jormInfo['type'] === 'boolean') {
+                    if (isset($_POST[$jormInfo['col']])) {
+                        $_POST[$jormInfo['col']] = '1';
+                    } else {
+                        $_POST[$jormInfo['col']] = '0';
+                    }
+                    continue;
+                }
+
                 if ($value === $_POST[$jormInfo['col']] || ($value === null && $_POST[$jormInfo['col']] === '')) {
                     array_push($unsetArr, $jormInfo['col']);
                 }

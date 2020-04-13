@@ -22,9 +22,13 @@ class HTMLUtils {
         return "<a href='/$tableName?where=$whereClause'>$innerHTML</a>";
     }
 
-    public static function generateManyToOneSelection(string $tableName, string $column, string $foreignKey, string $foreignView, string $defaultValue): string {
+    public static function generateManyToOneSelection(string $tableName, string $column, string $foreignKey, string $foreignView, string $defaultValue, bool $required): string {
         global $database;
-        $returnHTML = "<select name='$column'><option value=''>None</option>";
+        $returnHTML = '<select';
+        if ($required) {
+            $returnHTML .= ' required';
+        }
+        $returnHTML .= " name='$column'><option value=''>None</option>";
 
         $queryResult = $database->queryAllKeysFromTable($tableName, $foreignKey, $foreignView);
         foreach ($queryResult as $row) {
@@ -36,6 +40,10 @@ class HTMLUtils {
         }
         
         $returnHTML .= "</select>";
+        if ($required) {
+            $returnHTML .= '<span class="required">*</span>';
+        }
+
         return $returnHTML;
     }
 
@@ -57,6 +65,8 @@ class HTMLUtils {
                 // datetime-local only accepts timestamps that have a 'T' separating the date and time.
                 if ($inputType === 'datetime-local') {
                     $defaultValue = str_replace(' ', 'T', $defaultValue);
+                } else if ($inputType === 'checkbox' && $defaultValue === '1') {
+                    $required .= ' checked';
                 }
 
                 $input = "<input$required type='$inputType' name='$name' value='$defaultValue'>";

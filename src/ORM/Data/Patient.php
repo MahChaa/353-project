@@ -70,7 +70,7 @@ class Patient extends Table {
     /**
      * \JORM {
      * oneToMany = Appointment,
-     * foreignKey = id,
+     * foreignKey = patient_id,
      * header = Appointments,
      * view = View all Appointments
      * }

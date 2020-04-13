@@ -62,8 +62,7 @@ class Dentist extends Table {
      * \JORM {
      * col = is_assistant,
      * type = boolean,
-     * header = Assistant?,
-     * nullable = 0
+     * header = Assistant?
      * }
      */
     public $isAssistant;
@@ -91,7 +90,7 @@ class Dentist extends Table {
 
     /**
      * \JORM {
-     * oneToMany = Appointment,
+     * oneToMany = Treatment,
      * foreignKey = assigned_to_dentist_id,
      * header = Assigned To,
      * view = View all Assignments
@@ -101,7 +100,7 @@ class Dentist extends Table {
 
     /**
      * \JORM {
-     * oneToMany = Appointment,
+     * oneToMany = Treatment,
      * foreignKey = assigned_by_dentist_id,
      * header = Assigner,
      * view = View all Assignments
