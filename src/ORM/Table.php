@@ -227,11 +227,12 @@ abstract class Table {
         $routeMainPath = $jormInfo['table'];
         $primaryKey = $jormInfo['primaryKeyColumn'];
 
-        Router::add("/$routeMainPath", function() {
+        Router::add("/$routeMainPath", function() use ($routeMainPath) {
             $whereClause = '';
             if (isset($_GET['where'])) {
                 $whereClause = urldecode($_GET['where']);
             }
+            echo "<a href='/$routeMainPath/create'><input type='button' value='Add new row'></a><br>";
             echo self::constructViewHTMLTable($whereClause);
         });
 
