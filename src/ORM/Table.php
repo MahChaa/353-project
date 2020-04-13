@@ -270,6 +270,17 @@ abstract class Table {
                 }
 
                 $value = $property->getValue($instance);
+
+                // Checkboxes only send a value if they're checked.
+                if (!isset($jormInfo['manyToOne']) && $jormInfo['type'] === 'boolean') {
+                    if (isset($_POST[$jormInfo['col']])) {
+                        $_POST[$jormInfo['col']] = '1';
+                    } else {
+                        $_POST[$jormInfo['col']] = '0';
+                    }
+                    continue;
+                }
+
                 if ($value === $_POST[$jormInfo['col']] || ($value === null && $_POST[$jormInfo['col']] === '')) {
                     array_push($unsetArr, $jormInfo['col']);
                 }

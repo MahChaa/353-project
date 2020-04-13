@@ -65,7 +65,7 @@ class HTMLUtils {
                 // datetime-local only accepts timestamps that have a 'T' separating the date and time.
                 if ($inputType === 'datetime-local') {
                     $defaultValue = str_replace(' ', 'T', $defaultValue);
-                } else if ($inputType === 'checkbox') {
+                } else if ($inputType === 'checkbox' && $defaultValue === '1') {
                     $required .= ' checked';
                 }
 
