@@ -17,6 +17,11 @@ include(__DIR__ . '/InitializeRoutes.php');
         color: blue;
     }
 
+    textarea {
+        width: 100%;
+        height: 200px;
+    }
+
     .edit-link, .edit-link:visited {
         color: blue;
     }

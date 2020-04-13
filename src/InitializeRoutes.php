@@ -32,7 +32,28 @@ Router::add('/', function() use ($tables) {
         $name = ucfirst($table);
         echo "<a href='/$table'>$name</a><br>";
     }
+    echo '<br>';
+    echo "<a href='/sql'>Send raw SQL statements</a><br>";
 });
+
+// Raw SQL route.
+Router::add('/sql', function () {
+    echo '<form method="post" action="">';
+    echo '<label for="query">Raw SQL:</label><br>';
+    echo '<textarea required id="query" name="query"></textarea>';
+    echo '<br><input type="submit" name="submit" value="Submit"></form>';
+});
+Router::add('/sql', function () {
+    global $database;
+
+    $data = $_POST['query'];
+    echo '<form method="post" action="">';
+    echo '<label for="query">Raw SQL:</label><br>';
+    echo "<textarea required id='query' name='query'>$data</textarea>";
+    echo '<br><input type="submit" name="submit" value="Submit"></form><br><br>';
+
+    echo $database->sendRawSQL($data);
+}, "post");
 
 // Add a 404 not found route
 Router::pathNotFound(function($path) {

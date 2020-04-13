@@ -121,4 +121,36 @@ class Database {
         $query = "DELETE FROM $tableName WHERE $primaryKeyColumn = $primaryKey";
         $this->connection->query($query) or die($this->connection->error);
     }
+
+    public function sendRawSQL(string $query): string {
+        $result = $this->connection->query($query);
+        if (!$result) {
+            $error = $this->connection->error;
+            return "<p style='color: red'>$error</p>";
+        }
+
+        $result = $this->convertQueryToAssociativeArray($result);
+        if (count($result) < 1) {
+            return '<p style="color: red">No results found.</p>';
+        }
+
+        $html = '<table class="db-table">';
+
+        $html .= '<tr>';
+        foreach (array_keys($result[0]) as $header) {
+            $html .= "<th>$header</th>";
+        }
+        $html .= '</tr>';
+
+        foreach ($result as $row) {
+            $html .= '<tr>';
+            foreach ($row as $cell) {
+                $html .= "<td>$cell</td>";
+            }
+            $html .= '</tr>';
+        }
+
+        $html .= '</table>';
+        return $html;
+    }
 }
