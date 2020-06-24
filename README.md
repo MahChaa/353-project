@@ -1,4 +1,12 @@
-# List of banned stuff
+# Archive Readme
+Basically a primitive ORM written in pure PHP with little use to anyone.
+
+## License
+Unless otherwise stated, the project's licensed under the zlib license. Please refer to the [LICENSE.md](LICENSE.md) file for more details.
+
+# Original Readme Below
+
+## List of banned stuff
 
 * Anything that isn't [OTBS indentation style](https://en.wikipedia.org/wiki/Indentation_style#Variant:_1TBS_(OTBS)) (Allman, GNU, etc).
 * Omitting brackets when they can be used.
